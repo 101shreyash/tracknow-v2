@@ -21,7 +21,7 @@ app
     bcrypt.hash(req.body.password, 12, (err, hashed) => {
       if (err) {
         console.log(err.message);
-        res.status(500).send("Internal Server Error");
+       return res.status(500).send("Internal Server Error");
       }
       pool.query(
         "INSERT INTO userinfo (username,password) VALUES ($1,$2)",
@@ -29,9 +29,9 @@ app
         (err, result) => {
           if (err) {
             console.log(err.message);
-            res.status(500).send("Server Error 500");
+           return res.status(500).send("Server Error 500");
           } else {
-            res.send("Youre sucessfully signed in");
+           return res.send("Youre sucessfully signed in");
           }
         },
       );
@@ -46,7 +46,7 @@ app.route("/login").post((req, res) => {
     (err, result) => {
       if (err) {
         console.log(err.message);
-        res.status(500).send("Internal Server Error");
+      return  res.status(500).send("Internal Server Error");
       }
       if (result.rowCount === 0) {
       return  res.status(401).send("Invalid Email");
@@ -90,7 +90,7 @@ app.route("/login").post((req, res) => {
           }
          
        res.cookie("jwt" , token , {httpOnly : true})
-       res.send("Logged in Sucessfully Go write Journal Now");
+      return res.send("Logged in Sucessfully Go write Journal Now");
 
         }
       });
@@ -131,7 +131,7 @@ console.log("BODY:", req.body);
   console.log("JOURNAL:", req.body.journal);
 
   fs.appendFileSync(datepath , `time -${cuurentdate} notes : ${req.body.journal}\n`)
-  res.send("saved")
+  return res.send("saved")
 
 })
 
@@ -147,12 +147,21 @@ console.log("BODY:", req.body);
   fs.readFile(datepath , (err,data) => {
     if(err){
       console.log(err.message)
-      res.send("server Error")
+     return res.send("server Error")
     }
     else{
-      res.send(data)
+     return res.send(data)
     }
   })
+  
+})
+
+app.route("/logout")
+
+.post((req,res) => {
+
+  res.clearCookie("jwt")
+  return res.send("Logged out")
   
 })
 
